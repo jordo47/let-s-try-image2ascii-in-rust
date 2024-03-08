@@ -1,4 +1,3 @@
-use zune_core::bytestream::ZReaderTrait;
 use zune_jpeg::JpegDecoder;
 use std::env;
 use std::fs;
@@ -25,10 +24,6 @@ fn main() {
     let mut decoder = JpegDecoder::new(&data);
     let pixels = decoder.decode().unwrap();
     let image_info = decoder.info().unwrap();
-    println!("{},{}", image_info.width, image_info.height);
-    println!("{}", pixels.get_len());
-
-    print_type(&pixels);
 
     let mut _ascii = String::new();
     let mut _i = 0;
@@ -42,7 +37,7 @@ fn main() {
         
         if _i == image_info.width {
             _i = 0;
-            _ascii += "\r\n"; 
+            _ascii += "\n"; 
         }
         if sum < 17 * i32::from(image_info.components) {
             _i += 1;
