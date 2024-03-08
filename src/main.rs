@@ -1,3 +1,4 @@
+use zune_core::bytestream::ZReaderTrait;
 use zune_jpeg::JpegDecoder;
 use std::env;
 use std::fs;
@@ -25,86 +26,97 @@ fn main() {
     let pixels = decoder.decode().unwrap();
     let image_info = decoder.info().unwrap();
     println!("{},{}", image_info.width, image_info.height);
+    println!("{}", pixels.get_len());
+
     print_type(&pixels);
-    let mut _i = 0;
+
     let mut _ascii = String::new();
-    for item in &pixels {
+    let mut _i = 0;
+    for i in (0..pixels.len()-1).step_by(usize::from(image_info.components)){
+        let sum: i32 = match image_info.components {
+            1 => i32::from(pixels[i]),
+            2 => i32::from(pixels[i]) + i32::from(pixels[i+1]),
+            3 => i32::from(pixels[i]) + i32::from(pixels[i+1]) + i32::from(pixels[i+2]),
+            _ => panic!(),
+        };
+        
         if _i == image_info.width {
             _i = 0;
             _ascii += "\r\n"; 
         }
-        if i32::from(*item) < 17 {
+        if sum < 17 * i32::from(image_info.components) {
             _i += 1;
             _ascii += "."; 
             continue;
         }
-        if i32::from(*item) < 34 { 
+        if sum < 34 * i32::from(image_info.components) { 
             _i += 1;
             _ascii += "`"; 
             continue;
         }
-        if i32::from(*item) < 51 {
+        if sum < 51 * i32::from(image_info.components) {
             _i += 1;
             _ascii += "-"; 
             continue;
         }
-        if i32::from(*item) < 68 { 
+        if sum < 68 * i32::from(image_info.components) { 
             _i += 1;
             _ascii += "*";
             continue;
         }
-        if i32::from(*item) < 85 {
+        if sum < 85 * i32::from(image_info.components) {
             _i += 1;
             _ascii += "~";
             continue;
         }
-        if i32::from(*item) < 102 {
+        if sum < 102 * i32::from(image_info.components) {
             _i += 1;
             _ascii += "^";
             continue;
         }
-        if i32::from(*item) < 119 {
+        if sum < 119 * i32::from(image_info.components) {
             _i += 1;
             _ascii += "+";
             continue;
         }
-        if i32::from(*item) < 136 {
+        if sum < 136 * i32::from(image_info.components) {
             _i += 1;
             _ascii += "=";
             continue;
         }
-        if i32::from(*item) < 153 {
+        if sum < 153 * i32::from(image_info.components) {
             _i += 1;
             _ascii += "%";
             continue;
         }
-        if i32::from(*item) < 170 {
+        if sum < 170 * i32::from(image_info.components) {
             _i += 1;
             _ascii += "$";
             continue;
         }
-        if i32::from(*item) < 187 {
+        if sum < 187 * i32::from(image_info.components) {
             _i += 1;
             _ascii += ">";
             continue;
         }
-        if i32::from(*item) < 204 { 
+        if sum < 204 * i32::from(image_info.components) { 
             _i += 1;
             _ascii += "<";
             continue;
         }
-        if i32::from(*item) < 221 {
+        if sum < 221 * i32::from(image_info.components) {
             _i += 1;
             _ascii += "&";
             continue;
         }
-        if i32::from(*item) < 238 {
+        if sum < 238 * i32::from(image_info.components) {
             _i += 1;
             _ascii += "@"; 
             continue;
         }
         _i += 1;
-        _ascii += "#"; 
+        _ascii += "#";
+
     }
 
     let _ = fs::write(ascii_path, _ascii);
